@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { api } from "@/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -10,35 +10,41 @@ export default function EvaluationDetails() {
     queryFn: () => api.getEvaluation(Number(id)),
   });
 
-  if (isPending) return <p>Загрузка...</p>;
-  if (error) return <p className="text-red-600">{error.message}</p>;
+  if (isPending) return <p>Загрузка…</p>;
+  if (error) return <p className="rounded-md bg-red-50 p-3 text-red-700">{error.message}</p>;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          Соответствие: <span className="text-primary">{data.score}%</span>
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">{new Date(data.created_at).toLocaleString("ru-RU")}</p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div>
-          <h3 className="mb-2 font-semibold">Сильные стороны</h3>
-          <ul className="list-disc space-y-1 pl-5">
-            {data.strengths.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="mb-2 font-semibold">Чего не хватает</h3>
-          <ul className="list-disc space-y-1 pl-5">
-            {data.gaps.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      <Link to="/evaluations" className="text-sm text-primary">
+        ← Назад к списку
+      </Link>
+      <Card>
+        <CardHeader>
+          <p className="text-sm text-muted-foreground">
+            {data.vacancy_title} · {new Date(data.created_at).toLocaleString("ru-RU")}
+          </p>
+          <CardTitle className="text-5xl text-primary">{data.score}%</CardTitle>
+          <p className="text-muted-foreground">соответствие резюме вакансии</p>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="mb-2 text-lg font-semibold">👍 Что хорошо</h3>
+            <ul className="list-disc space-y-1 pl-5">
+              {data.strengths.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="mb-2 text-lg font-semibold">⚠️ Чего не хватает</h3>
+            <ul className="list-disc space-y-1 pl-5">
+              {data.gaps.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
