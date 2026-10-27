@@ -1,4 +1,5 @@
 import json
+import re
 
 import httpx
 from fastapi import HTTPException
@@ -10,17 +11,19 @@ from app.settings import settings
 PROMPT = """Ты — помощник HR. Сравни резюме кандидата с вакансией.
 Верни ТОЛЬКО JSON без пояснений и без markdown, в таком виде:
 {{"score": число от 0 до 100 (процент соответствия), "strengths": ["сильная сторона", ...], "gaps": ["чего не хватает", ...]}}
-Пиши на русском языке.
+Пиши ТОЛЬКО на русском языке. Не используй китайские, японские и другие иностранные символы (технические термины можно писать латиницей).
 
-ВАКАНСИЯ:
-{vacancy}
+ВАКАНСИЯ: {title}
+ОПИСАНИЕ ВАКАНСИИ: {description}
 
 РЕЗЮМЕ:
 {resume}
 """
 
+CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 
-def evaluate(vacancy: str, resume: str) -> AiAnswer:
+
+def evaluate(title: str, description: str, resume: str) -> AiAnswer:
     """Отправляет вакансию и резюме в LLM и проверяет, что ответ — правильный JSON."""
     if not settings.openrouter_api_key:
         raise HTTPException(status_code=500, detail="Не задан ключ OPENROUTER_API_KEY")
@@ -35,14 +38,16 @@ def evaluate(vacancy: str, resume: str) -> AiAnswer:
                 headers={"Authorization": f"Bearer {settings.openrouter_api_key}"},
                 json={
                     "model": model.strip(),
-                    "messages": [{"role": "user", "content": PROMPT.format(vacancy=vacancy, resume=resume)}],
+                    "messages": [{"role": "user", "content": PROMPT.format(title=title, description=description or "не указано", resume=resume)}],
                 },
                 timeout=120,
             )
             response.raise_for_status()
             text = response.json()["choices"][0]["message"]["content"]
-            if text:
+            # Иногда модель «срывается» на китайский — тогда пробуем следующую модель
+            if text and not CJK.search(text):
                 break
+            text = None
         except (httpx.HTTPError, KeyError, IndexError, ValueError, TypeError):
             continue
     if not text:
