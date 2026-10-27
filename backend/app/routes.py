@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.ai import evaluate
 from app.auth import check_password, find_user, get_current_user, make_token
 from app.database import get_db
-from app.models import User
-from app.schemas import LoginForm
+from app.models import Evaluation, User
+from app.resume_reader import read_resume_file
+from app.schemas import EvaluationOut, LoginForm
 
 router = APIRouter(prefix="/api")
 
@@ -27,3 +30,47 @@ def logout(response: Response):
 @router.get("/me")
 def me(user: User = Depends(get_current_user)):
     return {"username": user.username}
+
+
+@router.post("/evaluations", response_model=EvaluationOut)
+def create_evaluation(
+    vacancy: str = Form(),
+    resume_text: str = Form(default=""),
+    resume_file: UploadFile | None = File(default=None),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if resume_file is not None and resume_file.filename:
+        resume = read_resume_file(resume_file.filename, resume_file.file.read())
+    else:
+        resume = resume_text
+    if not vacancy.strip() or not resume.strip():
+        raise HTTPException(status_code=400, detail="Нужны текст вакансии и резюме")
+
+    answer = evaluate(vacancy, resume)
+    evaluation = Evaluation(
+        user_id=user.id,
+        vacancy_text=vacancy,
+        resume_text=resume,
+        score=answer.score,
+        strengths=answer.strengths,
+        gaps=answer.gaps,
+    )
+    db.add(evaluation)
+    db.commit()
+    db.refresh(evaluation)
+    return evaluation
+
+
+@router.get("/evaluations", response_model=list[EvaluationOut])
+def list_evaluations(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    query = select(Evaluation).where(Evaluation.user_id == user.id).order_by(Evaluation.id.desc())
+    return db.scalars(query).all()
+
+
+@router.get("/evaluations/{evaluation_id}", response_model=EvaluationOut)
+def get_evaluation(evaluation_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    evaluation = db.get(Evaluation, evaluation_id)
+    if evaluation is None or evaluation.user_id != user.id:
+        raise HTTPException(status_code=404, detail="Оценка не найдена")
+    return evaluation
