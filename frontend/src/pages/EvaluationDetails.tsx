@@ -18,25 +18,32 @@ export default function EvaluationDetails() {
       <Link to="/evaluations" className="text-sm text-primary">
         ← Назад к списку
       </Link>
-      <Card>
-        <CardHeader>
-          <p className="text-sm text-muted-foreground">
-            {data.vacancy_title} · {new Date(data.created_at).toLocaleString("ru-RU")}
-          </p>
-          <CardTitle className="text-5xl text-primary">{data.score}%</CardTitle>
+      <Card className="rounded-2xl shadow-md">
+        <CardHeader className="items-center text-center">
+          <p className="text-sm text-muted-foreground">{new Date(data.created_at).toLocaleString("ru-RU")}</p>
+          <CardTitle className="text-2xl">{data.vacancy_title}</CardTitle>
+          <div
+            className="mt-4 flex h-36 w-36 items-center justify-center rounded-full"
+            style={{ background: `conic-gradient(hsl(var(--primary)) ${data.score * 3.6}deg, hsl(var(--muted)) 0deg)` }}
+          >
+            <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-background">
+              <span className="text-4xl font-bold text-primary">{data.score}%</span>
+            </div>
+          </div>
           <p className="text-muted-foreground">соответствие резюме вакансии</p>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <h3 className="mb-2 text-lg font-semibold">👍 Что хорошо</h3>
+        <CardContent className="space-y-4">
+          <div className="rounded-xl bg-green-50 p-4">
+            <h3 className="mb-2 font-semibold text-green-800">👍 Что хорошо</h3>
             <ul className="list-disc space-y-1 pl-5">
               {data.strengths.map((item, i) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
           </div>
-          <div>
-            <h3 className="mb-2 text-lg font-semibold">⚠️ Чего не хватает</h3>
+          <div className="rounded-xl bg-amber-50 p-4">
+            <h3 className="mb-2 font-semibold text-amber-800">⚠️ Чего не хватает</h3>
+            {data.gaps.length === 0 && <p>Ничего критичного не найдено</p>}
             <ul className="list-disc space-y-1 pl-5">
               {data.gaps.map((item, i) => (
                 <li key={i}>{item}</li>

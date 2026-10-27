@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { FormEvent, useState } from "react";
 import { api } from "@/api";
+import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,8 +24,11 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted px-4">
-      <Card className="w-full max-w-sm">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-muted px-4">
+      <div className="rounded-xl bg-foreground px-5 py-3 text-white">
+        <Logo />
+      </div>
+      <Card className="w-full max-w-sm rounded-2xl shadow-md">
         <CardHeader>
           <CardTitle>Вход</CardTitle>
         </CardHeader>

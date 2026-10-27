@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Link, Outlet, createRootRoute, createRoute, createRouter, redirect, useNavigate } from "@tanstack/react-router";
 import { api } from "@/api";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 import EvaluationDetails from "@/pages/EvaluationDetails";
 import EvaluationList from "@/pages/EvaluationList";
 import Login from "@/pages/Login";
@@ -20,18 +21,22 @@ function Layout() {
   return (
     <div className="min-h-screen bg-muted">
       <header className="bg-foreground text-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-          <span className="font-bold text-primary">Оценка резюме</span>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link to="/">Новая оценка</Link>
-            <Link to="/evaluations">История</Link>
-            <Button variant="ghost" size="sm" className="hover:bg-white/10" onClick={logout}>
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-4">
+          <Logo />
+          <nav className="flex items-center gap-1 text-sm">
+            <Link to="/" className="rounded-md px-3 py-2 hover:bg-white/10" activeProps={{ className: "bg-white/15" }} activeOptions={{ exact: true }}>
+              Новая оценка
+            </Link>
+            <Link to="/evaluations" className="rounded-md px-3 py-2 hover:bg-white/10" activeProps={{ className: "bg-white/15" }}>
+              История
+            </Link>
+            <Button variant="ghost" size="sm" className="ml-2 border border-white/30 hover:bg-white/10" onClick={logout}>
               Выйти
             </Button>
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main className="mx-auto max-w-2xl px-4 py-8">
         <Outlet />
       </main>
     </div>
