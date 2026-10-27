@@ -25,20 +25,28 @@ def evaluate(vacancy: str, resume: str) -> AiAnswer:
     if not settings.openrouter_api_key:
         raise HTTPException(status_code=500, detail="Не задан ключ OPENROUTER_API_KEY")
 
-    try:
-        response = httpx.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={"Authorization": f"Bearer {settings.openrouter_api_key}"},
-            json={
-                "model": settings.openrouter_model,
-                "messages": [{"role": "user", "content": PROMPT.format(vacancy=vacancy, resume=resume)}],
-            },
-            timeout=120,
-        )
-        response.raise_for_status()
-        text = response.json()["choices"][0]["message"]["content"]
-    except (httpx.HTTPError, KeyError, IndexError, ValueError):
-        raise HTTPException(status_code=502, detail="Не удалось получить ответ от нейросети")
+    # Бесплатные модели иногда перегружены, поэтому в OPENROUTER_MODEL можно указать
+    # несколько через запятую: пробуем по очереди, пока одна не ответит
+    text = None
+    for model in settings.openrouter_model.split(","):
+        try:
+            response = httpx.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={"Authorization": f"Bearer {settings.openrouter_api_key}"},
+                json={
+                    "model": model.strip(),
+                    "messages": [{"role": "user", "content": PROMPT.format(vacancy=vacancy, resume=resume)}],
+                },
+                timeout=120,
+            )
+            response.raise_for_status()
+            text = response.json()["choices"][0]["message"]["content"]
+            if text:
+                break
+        except (httpx.HTTPError, KeyError, IndexError, ValueError, TypeError):
+            continue
+    if not text:
+        raise HTTPException(status_code=502, detail="Не удалось получить ответ от нейросети, попробуйте ещё раз")
 
     try:
         # Модель иногда оборачивает JSON в лишний текст — берём то, что между { и }

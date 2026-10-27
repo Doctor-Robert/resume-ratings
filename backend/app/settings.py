@@ -11,7 +11,7 @@ class Settings(BaseSettings):
 
     secret_key: str = "change-me"
     openrouter_api_key: str = ""
-    openrouter_model: str = "meta-llama/llama-3.3-70b-instruct:free"
+    openrouter_model: str = "nvidia/nemotron-3-ultra-550b-a55b:free,poolside/laguna-s-2.1:free,google/gemma-4-31b-it:free"
 
     @property
     def database_url(self) -> str:
