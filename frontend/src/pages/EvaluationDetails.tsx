@@ -4,7 +4,7 @@ import { api } from "@/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function EvaluationDetails() {
-  const { id } = useParams({ from: "/evaluations/$id" });
+  const { id } = useParams({ from: "/protected/evaluations/$id" });
   const { data, isPending, error } = useQuery({
     queryKey: ["evaluations", id],
     queryFn: () => api.getEvaluation(Number(id)),
