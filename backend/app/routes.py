@@ -35,7 +35,6 @@ def me(user: User = Depends(get_current_user)):
 @router.post("/evaluations", response_model=EvaluationOut)
 def create_evaluation(
     vacancy_title: str = Form(),
-    vacancy_text: str = Form(default=""),
     resume_text: str = Form(default=""),
     resume_file: UploadFile | None = File(default=None),
     user: User = Depends(get_current_user),
@@ -48,11 +47,10 @@ def create_evaluation(
     if not vacancy_title.strip() or not resume.strip():
         raise HTTPException(status_code=400, detail="Нужны название вакансии и резюме")
 
-    answer = evaluate(vacancy_title, vacancy_text, resume)
+    answer = evaluate(vacancy_title, resume)
     evaluation = Evaluation(
         user_id=user.id,
         vacancy_title=vacancy_title.strip(),
-        vacancy_text=vacancy_text,
         resume_text=resume,
         score=answer.score,
         strengths=answer.strengths,

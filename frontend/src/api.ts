@@ -3,7 +3,6 @@
 export type Evaluation = {
   id: number;
   vacancy_title: string;
-  vacancy_text: string;
   resume_text: string;
   score: number;
   strengths: string[];

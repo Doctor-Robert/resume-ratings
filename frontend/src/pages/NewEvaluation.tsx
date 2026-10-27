@@ -12,7 +12,6 @@ export default function NewEvaluation() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [resumeText, setResumeText] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
@@ -28,7 +27,6 @@ export default function NewEvaluation() {
     event.preventDefault();
     const form = new FormData();
     form.append("vacancy_title", title);
-    form.append("vacancy_text", description);
     if (file) form.append("resume_file", file);
     else form.append("resume_text", resumeText);
     create.mutate(form);
@@ -50,15 +48,6 @@ export default function NewEvaluation() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Описание вакансии (по желанию)</Label>
-            <Textarea
-              id="description"
-              placeholder="Требования, обязанности, стек — чем подробнее, тем точнее оценка"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <div className="space-y-2">

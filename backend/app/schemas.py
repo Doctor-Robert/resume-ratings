@@ -19,7 +19,6 @@ class AiAnswer(BaseModel):
 class EvaluationOut(AiAnswer):
     id: int
     vacancy_title: str
-    vacancy_text: str
     resume_text: str
     created_at: datetime
 
