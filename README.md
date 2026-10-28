@@ -49,6 +49,12 @@ make create-user login=admin password=your-password
 make create-user login=имя password=пароль
 ```
 
+Удалить пользователя (вместе с его оценками):
+
+```bash
+make delete-user login=имя
+```
+
 ## API
 
 - `POST /api/login`, `POST /api/logout`, `GET /api/me`

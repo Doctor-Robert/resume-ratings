@@ -13,5 +13,9 @@ migrate:  ## Применить миграции базы
 create-user:  ## Создать пользователя
 	docker compose exec backend python -m app.create_user $(login) $(password)
 
+# Пример: make delete-user login=admin (удаляет и все оценки пользователя)
+delete-user:  ## Удалить пользователя
+	docker compose exec backend python -m app.delete_user $(login)
+
 logs:  ## Смотреть логи
 	docker compose logs -f
