@@ -7,7 +7,7 @@ export default function EvaluationList() {
   const { data, isPending, error } = useQuery({ queryKey: ["evaluations"], queryFn: api.listEvaluations });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Сохранённые результаты</p>
         <h1 className="break-words text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">История оценок</h1>
@@ -20,7 +20,7 @@ export default function EvaluationList() {
         </Card>
       )}
       {data?.map((item) => (
-        <Link key={item.id} to="/evaluations/$id" params={{ id: String(item.id) }}>
+        <Link key={item.id} to="/evaluations/$id" params={{ id: String(item.id) }} className="block">
           <Card className="mb-3 flex items-center justify-between gap-4 rounded-xl border-border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm">
             <div className="min-w-0">
               <p className="truncate font-medium leading-6">{item.vacancy_title}</p>
