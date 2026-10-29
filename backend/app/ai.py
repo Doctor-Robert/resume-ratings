@@ -13,7 +13,10 @@ PROMPT = """Ты — помощник HR. Сравни резюме кандид
 {{"score": число от 0 до 100 (процент соответствия), "strengths": ["сильная сторона", ...], "gaps": ["чего не хватает", ...]}}
 Пиши ТОЛЬКО на русском языке. Не используй китайские, японские и другие иностранные символы (технические термины можно писать латиницей).
 
-ВАКАНСИЯ: {title}
+НАЗВАНИЕ ВАКАНСИИ: {vacancy_title}
+
+ОПИСАНИЕ ВАКАНСИИ:
+{vacancy_text}
 
 РЕЗЮМЕ:
 {resume}
@@ -22,7 +25,7 @@ PROMPT = """Ты — помощник HR. Сравни резюме кандид
 CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 
 
-def evaluate(title: str, resume: str) -> AiAnswer:
+def evaluate(vacancy_title: str, vacancy_text: str, resume: str) -> AiAnswer:
     """Отправляет вакансию и резюме в LLM и проверяет, что ответ — правильный JSON."""
     if not settings.openrouter_api_key:
         raise HTTPException(status_code=500, detail="Не задан ключ OPENROUTER_API_KEY")
@@ -37,7 +40,16 @@ def evaluate(title: str, resume: str) -> AiAnswer:
                 headers={"Authorization": f"Bearer {settings.openrouter_api_key}"},
                 json={
                     "model": model.strip(),
-                    "messages": [{"role": "user", "content": PROMPT.format(title=title, resume=resume)}],
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": PROMPT.format(
+                                vacancy_title=vacancy_title,
+                                vacancy_text=vacancy_text,
+                                resume=resume,
+                            ),
+                        }
+                    ],
                 },
                 timeout=120,
             )

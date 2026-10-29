@@ -20,23 +20,23 @@ function Layout() {
   }
   return (
     <div className="min-h-screen bg-muted">
-      <header className="bg-foreground text-white">
-        <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-4">
+      <header className="border-b border-border bg-background">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Logo />
           <nav className="flex items-center gap-1 text-sm">
-            <Link to="/" className="rounded-md px-3 py-2 hover:bg-white/10" activeProps={{ className: "bg-white/15" }} activeOptions={{ exact: true }}>
+            <Link to="/" className="rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" activeProps={{ className: "bg-primary/5 font-medium text-primary" }} activeOptions={{ exact: true }}>
               Новая оценка
             </Link>
-            <Link to="/evaluations" className="rounded-md px-3 py-2 hover:bg-white/10" activeProps={{ className: "bg-white/15" }}>
+            <Link to="/evaluations" className="rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" activeProps={{ className: "bg-primary/5 font-medium text-primary" }}>
               История
             </Link>
-            <Button variant="ghost" size="sm" className="ml-2 border border-white/30 hover:bg-white/10" onClick={logout}>
+            <Button variant="outline" size="sm" className="ml-1" onClick={logout}>
               Выйти
             </Button>
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-2xl px-4 py-8">
+      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <Outlet />
       </main>
     </div>

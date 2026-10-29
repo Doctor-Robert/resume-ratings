@@ -11,45 +11,56 @@ export default function EvaluationDetails() {
   });
 
   if (isPending) return <p>Загрузка…</p>;
-  if (error) return <p className="rounded-md bg-red-50 p-3 text-red-700">{error.message}</p>;
+  if (error) return <p role="alert" className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">{error.message}</p>;
 
   return (
     <div className="space-y-4">
-      <Link to="/evaluations" className="text-sm text-primary">
-        ← Назад к списку
+      <Link to="/evaluations" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+        <span aria-hidden="true">←</span> История оценок
       </Link>
-      <Card className="rounded-2xl shadow-md">
-        <CardHeader className="items-center text-center">
+      <Card className="overflow-hidden rounded-xl border-border shadow-sm">
+        <CardHeader className="items-center border-b border-border bg-muted/60 px-5 py-8 text-center sm:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Результат оценки</p>
           <p className="text-sm text-muted-foreground">{new Date(data.created_at).toLocaleString("ru-RU")}</p>
-          <CardTitle className="text-2xl">{data.vacancy_title}</CardTitle>
+          <CardTitle className="max-w-2xl text-2xl leading-tight">{data.vacancy_title}</CardTitle>
           <div
-            className="mt-4 flex h-36 w-36 items-center justify-center rounded-full"
+            className="mt-4 flex h-36 w-36 items-center justify-center rounded-full shadow-sm"
             style={{ background: `conic-gradient(hsl(var(--primary)) ${data.score * 3.6}deg, hsl(var(--muted)) 0deg)` }}
           >
             <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-background">
               <span className="text-4xl font-bold text-primary">{data.score}%</span>
+              <span className="mt-1 text-xs text-muted-foreground">совпадение</span>
             </div>
           </div>
-          <p className="text-muted-foreground">соответствие резюме вакансии</p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="rounded-xl bg-green-50 p-4">
-            <h3 className="mb-2 font-semibold text-green-800">👍 Что хорошо</h3>
-            <ul className="list-disc space-y-1 pl-5">
+        <CardContent className="space-y-5 p-5 sm:p-8">
+          <section className="rounded-lg border border-primary/20 bg-primary/5 p-4 sm:p-5">
+            <h3 className="mb-3 flex items-center gap-2 font-semibold">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-sm text-white">+</span>
+              Сильные стороны
+            </h3>
+            <ul className="list-disc space-y-2 pl-5 text-sm leading-6">
               {data.strengths.map((item, i) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
-          </div>
-          <div className="rounded-xl bg-amber-50 p-4">
-            <h3 className="mb-2 font-semibold text-amber-800">⚠️ Чего не хватает</h3>
-            {data.gaps.length === 0 && <p>Ничего критичного не найдено</p>}
-            <ul className="list-disc space-y-1 pl-5">
+          </section>
+          <section className="rounded-lg border border-border bg-muted/60 p-4 sm:p-5">
+            <h3 className="mb-3 flex items-center gap-2 font-semibold">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-sm text-white">−</span>
+              Что стоит усилить
+            </h3>
+            {data.gaps.length === 0 && <p className="text-sm leading-6 text-muted-foreground">Существенных пробелов не найдено.</p>}
+            <ul className="list-disc space-y-2 pl-5 text-sm leading-6">
               {data.gaps.map((item, i) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
-          </div>
+          </section>
+          <section className="rounded-lg border border-border p-4 sm:p-5">
+            <h3 className="mb-2 text-sm font-semibold">Описание вакансии</h3>
+            <p className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{data.vacancy_text}</p>
+          </section>
         </CardContent>
       </Card>
     </div>

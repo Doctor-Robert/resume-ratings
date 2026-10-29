@@ -24,16 +24,15 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-muted px-4">
-      <div className="rounded-xl bg-foreground px-5 py-3 text-white">
-        <Logo />
-      </div>
-      <Card className="w-full max-w-sm rounded-2xl shadow-md">
-        <CardHeader>
-          <CardTitle>Вход</CardTitle>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted px-4 py-10">
+      <div className="mb-7"><Logo /></div>
+      <Card className="w-full max-w-sm rounded-xl border-border shadow-sm">
+        <CardHeader className="space-y-2 pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Рабочий кабинет</p>
+          <CardTitle className="text-2xl tracking-tight">Вход</CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={submit} className="space-y-4">
+        <CardContent className="pt-2">
+          <form onSubmit={submit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="username">Логин</Label>
               <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -42,7 +41,7 @@ export default function Login() {
               <Label htmlFor="password">Пароль</Label>
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
-            {login.isError && <p className="text-sm text-red-600">{login.error.message}</p>}
+            {login.isError && <p role="alert" className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">{login.error.message}</p>}
             <Button type="submit" className="w-full" disabled={login.isPending}>
               {login.isPending ? "Входим..." : "Войти"}
             </Button>

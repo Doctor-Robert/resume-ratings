@@ -8,20 +8,26 @@ export default function EvaluationList() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">История оценок</h1>
+      <div>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Сохранённые результаты</p>
+        <h1 className="text-3xl font-semibold tracking-tight">История оценок</h1>
+      </div>
       {isPending && <p>Загрузка…</p>}
-      {error && <p className="rounded-md bg-red-50 p-3 text-red-700">{error.message}</p>}
+      {error && <p role="alert" className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">{error.message}</p>}
       {data?.length === 0 && (
-        <Card className="p-6 text-center text-muted-foreground">Пока нет оценок. Нажмите «Новая оценка», чтобы сделать первую.</Card>
+        <Card className="rounded-xl border-border p-8 text-center text-sm leading-6 text-muted-foreground shadow-sm">
+          Пока нет оценок. Нажмите «Новая оценка», чтобы создать первую.
+        </Card>
       )}
       {data?.map((item) => (
         <Link key={item.id} to="/evaluations/$id" params={{ id: String(item.id) }}>
-          <Card className="mb-3 flex items-center justify-between gap-4 rounded-xl p-4 transition-shadow hover:shadow-md">
+          <Card className="mb-3 flex items-center justify-between gap-4 rounded-xl border-border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm">
             <div className="min-w-0">
-              <p className="truncate font-medium">{item.vacancy_title}</p>
-              <p className="text-sm text-muted-foreground">{new Date(item.created_at).toLocaleString("ru-RU")}</p>
+              <p className="truncate font-medium leading-6">{item.vacancy_title}</p>
+              <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground">{item.vacancy_text}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString("ru-RU")}</p>
             </div>
-            <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-lg font-semibold text-primary">{item.score}%</span>
+            <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1.5 text-base font-semibold text-primary">{item.score}%</span>
           </Card>
         </Link>
       ))}

@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
@@ -5,11 +6,12 @@ class Settings(BaseSettings):
     """Все настройки читаются из переменных окружения (файл .env)."""
 
     postgres_user: str = "resume"
-    postgres_password: str = "change-me"
+    postgres_password: str = Field(min_length=24)
     postgres_db: str = "resume"
     postgres_host: str = "db"
 
-    secret_key: str = "change-me"
+    secret_key: str = Field(min_length=32)
+    cookie_secure: bool = False
     openrouter_api_key: str = ""
     openrouter_model: str = "nvidia/nemotron-3-ultra-550b-a55b:free,poolside/laguna-s-2.1:free,google/gemma-4-31b-it:free"
 

@@ -20,6 +20,7 @@ class Evaluation(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     vacancy_title: Mapped[str] = mapped_column(String(200))
+    vacancy_text: Mapped[str] = mapped_column(Text)
     resume_text: Mapped[str] = mapped_column(Text)
     score: Mapped[int] = mapped_column(Integer)
     strengths: Mapped[list] = mapped_column(JSON)

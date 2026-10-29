@@ -8,6 +8,7 @@ from app.database import get_db
 from app.models import Evaluation, User
 from app.resume_reader import read_resume_file
 from app.schemas import EvaluationOut, LoginForm
+from app.settings import settings
 
 router = APIRouter(prefix="/api")
 
@@ -17,7 +18,14 @@ def login(form: LoginForm, response: Response, db: Session = Depends(get_db)):
     user = find_user(db, form.username)
     if user is None or not check_password(form.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Неверный логин или пароль")
-    response.set_cookie("token", make_token(user.id), httponly=True, samesite="lax", max_age=7 * 24 * 3600)
+    response.set_cookie(
+        "token",
+        make_token(user.id),
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite="lax",
+        max_age=7 * 24 * 3600,
+    )
     return {"username": user.username}
 
 
@@ -34,7 +42,8 @@ def me(user: User = Depends(get_current_user)):
 
 @router.post("/evaluations", response_model=EvaluationOut)
 def create_evaluation(
-    vacancy_title: str = Form(),
+    vacancy_title: str = Form(max_length=200),
+    vacancy_text: str = Form(),
     resume_text: str = Form(default=""),
     resume_file: UploadFile | None = File(default=None),
     user: User = Depends(get_current_user),
@@ -44,13 +53,16 @@ def create_evaluation(
         resume = read_resume_file(resume_file.filename, resume_file.file.read())
     else:
         resume = resume_text
-    if not vacancy_title.strip() or not resume.strip():
-        raise HTTPException(status_code=400, detail="Нужны название вакансии и резюме")
+    if not vacancy_title.strip() or not vacancy_text.strip() or not resume.strip():
+        raise HTTPException(status_code=400, detail="Нужны название и описание вакансии, а также резюме")
 
-    answer = evaluate(vacancy_title, resume)
+    vacancy_title = vacancy_title.strip()
+    vacancy_text = vacancy_text.strip()
+    answer = evaluate(vacancy_title, vacancy_text, resume)
     evaluation = Evaluation(
         user_id=user.id,
-        vacancy_title=vacancy_title.strip(),
+        vacancy_title=vacancy_title,
+        vacancy_text=vacancy_text,
         resume_text=resume,
         score=answer.score,
         strengths=answer.strengths,
