@@ -55,10 +55,6 @@ export default function EvaluationDetails() {
             <h3 className="mb-2 text-sm font-semibold">Описание вакансии</h3>
             <p className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{data.vacancy_text}</p>
           </section>
-          <section className="rounded-lg border border-border p-4 sm:p-5">
-            <h3 className="mb-2 text-sm font-semibold">Текст резюме</h3>
-            <p className="whitespace-pre-wrap break-words text-sm leading-6 text-muted-foreground">{data.resume_text}</p>
-          </section>
         </CardContent>
       </Card>
     </div>
