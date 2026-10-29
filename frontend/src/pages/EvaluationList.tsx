@@ -7,7 +7,7 @@ export default function EvaluationList() {
   const { data, isPending, error } = useQuery({ queryKey: ["evaluations"], queryFn: api.listEvaluations });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Сохранённые результаты</p>
         <h1 className="break-words text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">История оценок</h1>
