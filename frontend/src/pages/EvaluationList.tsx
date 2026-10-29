@@ -10,7 +10,7 @@ export default function EvaluationList() {
     <div className="space-y-4">
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Сохранённые результаты</p>
-        <h1 className="text-3xl font-semibold tracking-tight">История оценок</h1>
+        <h1 className="break-words text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">История оценок</h1>
       </div>
       {isPending && <p>Загрузка…</p>}
       {error && <p role="alert" className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">{error.message}</p>}
