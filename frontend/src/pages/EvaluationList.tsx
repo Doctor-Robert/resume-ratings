@@ -7,7 +7,7 @@ export default function EvaluationList() {
   const { data, isPending, error } = useQuery({ queryKey: ["evaluations"], queryFn: api.listEvaluations });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Сохранённые результаты</p>
         <h1 className="break-words text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">История оценок</h1>
@@ -19,18 +19,24 @@ export default function EvaluationList() {
           Пока нет оценок. Нажмите «Новая оценка», чтобы создать первую.
         </Card>
       )}
-      {data?.map((item) => (
-        <Link key={item.id} to="/evaluations/$id" params={{ id: String(item.id) }} className="block">
-          <Card className="mb-3 flex items-center justify-between gap-4 rounded-xl border-border p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm">
-            <div className="min-w-0">
-              <p className="truncate font-medium leading-6">{item.vacancy_title}</p>
-              <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground">{item.vacancy_text}</p>
-              <p className="mt-2 text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString("ru-RU")}</p>
-            </div>
-            <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1.5 text-base font-semibold text-primary">{item.score}%</span>
-          </Card>
-        </Link>
-      ))}
+      {data && data.length > 0 && (
+        <div className="space-y-3">
+          {data.map((item) => (
+            <Link key={item.id} to="/evaluations/$id" params={{ id: String(item.id) }} className="block">
+              <Card className="flex items-center justify-between gap-4 rounded-xl border-border p-4 transition-colors hover:border-primary/40 hover:shadow-sm">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="truncate font-medium leading-6">{item.vacancy_title}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString("ru-RU")}</p>
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground">{item.vacancy_text}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary">{item.score}%</span>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
